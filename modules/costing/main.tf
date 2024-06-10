@@ -43,10 +43,7 @@ resource "aws_iam_policy" "default" {
       {
         Sid    = "AllowDownloadDeleteCur"
         Effect = "Allow"
-        Action = [
-          "s3:GetObject",
-          "s3:DeleteObject"
-        ]
+        Action = concat(["s3:GetObject"], var.existing_cur_bucket_name == null ? ["s3:DeleteObject"] : [])
         Resource = [
           "arn:aws:s3:::${coalesce(var.existing_cur_bucket_name, "darktrace-costing-${local.account_id}")}/${coalesce(var.existing_cur_bucket_prefix, "reports")}/*"
         ]

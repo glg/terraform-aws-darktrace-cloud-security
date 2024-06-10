@@ -166,6 +166,17 @@ resource "aws_iam_policy" "default" {
             "arn:aws:cloudtrail:*:*:trail/${coalesce(var.existing_cloudtrail_name, try(aws_cloudtrail.default[0].name, ""))}"
           ]
         }
+      ] : [],
+      # Only created if setup_cloudtrail and setup_sqs is true
+      var.setup_cloudtrail == true && var.setup_sqs == true ? [
+        {
+          Effect = "Allow"
+          Action = [
+            "sqs:ReceiveMessage",
+            "sqs:DeleteMessage"
+          ]
+          Resource = [aws_sqs_queue.default[0].arn]
+        }
       ] : []
     )
   })
@@ -266,6 +277,48 @@ resource "aws_s3_bucket_policy" "default" {
       }
     ]
   })
+}
+
+#
+# SQS
+#
+resource "aws_sqs_queue" "default" {
+  count  = var.existing_cloudtrail_name == null && var.existing_cloudtrail_bucket_name == null && var.setup_cloudtrail == true && var.setup_sqs == true ? 1 : 0
+  name   = local.sqs_queue_name
+  policy = data.aws_iam_policy_document.default[0].json
+}
+
+data "aws_iam_policy_document" "default" {
+  count = var.existing_cloudtrail_name == null && var.existing_cloudtrail_bucket_name == null && var.setup_cloudtrail == true && var.setup_sqs == true ? 1 : 0
+  statement {
+    effect = "Allow"
+
+    principals {
+      type = "AWS"
+      identifiers = [
+        local.account_id
+      ]
+    }
+
+    actions   = ["sqs:SendMessage"]
+    resources = ["arn:aws:sqs:${local.region}:${local.account_id}:${local.sqs_queue_name}"]
+
+    condition {
+      test     = "ArnEquals"
+      variable = "aws:SourceArn"
+      values   = [aws_s3_bucket.default[0].arn]
+    }
+  }
+}
+
+resource "aws_s3_bucket_notification" "default" {
+  count  = var.existing_cloudtrail_name == null && var.existing_cloudtrail_bucket_name == null && var.setup_cloudtrail == true && var.setup_sqs == true ? 1 : 0
+  bucket = aws_s3_bucket.default[0].id
+
+  queue {
+    queue_arn = aws_sqs_queue.default[0].arn
+    events    = ["s3:ObjectCreated:*"]
+  }
 }
 
 #

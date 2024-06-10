@@ -44,3 +44,9 @@ variable "existing_cloudtrail_bucket_name" {
   description = "Existing CloudTrail Bucket Name"
   default     = null
 }
+
+variable "setup_sqs" {
+  type        = bool
+  description = "Setup SQS queue for Darktrace/Cloud to reduce latency when retrieving flow log data"
+  default     = false
+}
