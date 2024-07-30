@@ -12,5 +12,5 @@ variable "darktrace_cloud_security_core_iam_role_arn" {
 variable "existing_flow_log_bucket_name" {
   type        = list(string)
   description = "Existing Flow Log Bucket Name"
-  default     = [""]
+  default     = []
 }
