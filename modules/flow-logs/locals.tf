@@ -11,6 +11,7 @@ locals {
   ]
   s3_additional_actions = [
     "s3:PutBucketPolicy",
+    "s3:GetLifecycleConfiguration",
     "s3:PutLifecycleConfiguration",
     "s3:PutBucketTagging",
     "s3:DeleteBucket",

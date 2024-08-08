@@ -136,7 +136,8 @@ resource "aws_iam_policy" "default" {
             [
               "s3:GetLifecycleConfiguration",
               "s3:GetObject",
-              "s3:ListObject"
+              "s3:ListObject",
+              "s3:ListBucket"
             ],
             # Only created if autoconfigure_cloudtrail is true
             var.autoconfigure_cloudtrail ? ["s3:PutLifecycleConfiguration"] : []
