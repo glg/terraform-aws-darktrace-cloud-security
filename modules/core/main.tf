@@ -176,7 +176,7 @@ resource "aws_iam_policy" "default" {
             "sqs:ReceiveMessage",
             "sqs:DeleteMessage"
           ]
-          Resource = [aws_sqs_queue.default[0].arn]
+          Resource = [one(aws_sqs_queue.default[*].arn)]
         }
       ] : []
     )
