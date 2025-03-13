@@ -180,8 +180,6 @@ resource "aws_s3_bucket_policy" "default" {
 resource "aws_cur_report_definition" "default" {
   count = var.existing_cur_report_name == null ? 1 : 0
 
-  provider = aws.us_east_1
-
   additional_schema_elements = ["RESOURCES"]
   compression                = "Parquet"
   format                     = "Parquet"
