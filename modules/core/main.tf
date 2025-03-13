@@ -313,7 +313,6 @@ data "aws_iam_policy_document" "default" {
 }
 
 resource "aws_s3_bucket_notification" "default" {
-  count  = var.existing_cloudtrail_name == null && var.existing_cloudtrail_bucket_name == null && var.setup_cloudtrail == true && var.setup_sqs == true ? 1 : 0
   bucket = aws_s3_bucket.default[0].id
 
   queue {
