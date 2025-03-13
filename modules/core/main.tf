@@ -295,9 +295,9 @@ data "aws_iam_policy_document" "default" {
     effect = "Allow"
 
     principals {
-      type = "AWS"
+      type = "Service"
       identifiers = [
-        local.account_id
+        "s3.amazonaws.com"
       ]
     }
 
